@@ -1,35 +1,20 @@
-//import { sql } from "@vercel/postgres";
-import { createPool } from "@vercel/postgres";
+import { addLog } from "./get-logs";
 
-const pool = createPool();
+export default function handler(req, res) {
+  const ua = req.headers['user-agent'] || 'Unknown';
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const referer = req.headers['referer'] || 'Unknown';
+  const url = req.query.url || 'Unknown';
+  const time = new Date().toISOString();
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  const entry = `时间: ${time}
+IP: ${ip}
+设备: ${ua}
+来源: ${referer}
+访问页面: ${url}`;
 
-  const { url, userAgent, referrer, time } = req.body;
+  addLog(entry);
 
-  try {
-    // 自动建表（如果不存在）
-    await pool.sql`
-      CREATE TABLE IF NOT EXISTS visit_logs (
-        id SERIAL PRIMARY KEY,
-        url TEXT,
-        user_agent TEXT,
-        referrer TEXT,
-        time BIGINT
-      );
-    `;
-
-    // 插入访问记录
-    await sql`
-      INSERT INTO visit_logs (url, user_agent, referrer, time)
-      VALUES (${url}, ${userAgent}, ${referrer}, ${time});
-    `;
-
-    return res.status(200).json({ success: true });
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
-  }
+  res.status(200).json({ ok: true });
 }
+
