@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>访问监控面板</title>
+<style>
+  body { font-family: Arial; background:#111; color:#eee; padding:20px; }
+  h1 { color:#4fc3f7; }
+  #log { white-space: pre-wrap; background:#222; padding:15px; border-radius:8px; }
+</style>
+</head>
+<body>
+
+<h1>访问监控（实时）</h1>
+<p>每 2 秒自动刷新一次</p>
+
+<div id="log">加载中...</div>
+
+<script>
+async function loadLogs() {
+  try {
+    const res = await fetch("/api/get-logs");
+    const data = await res.json();
+    document.getElementById("log").textContent =
+      data.logs.length ? data.logs.join("\n\n") : "暂无访问记录";
+  } catch (e) {
+    document.getElementById("log").textContent = "无法加载日志";
+  }
+}
+
+setInterval(loadLogs, 2000);
+loadLogs();
+</script>
+
+</body>
+</html>
