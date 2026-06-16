@@ -1,6 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/monitor.html", "destination": "/public/monitor.html" }
-  ]
-}
-
