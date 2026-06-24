@@ -2,7 +2,8 @@
   "name": "vercel-api-test2",
   "version": "1.0.0",
   "type": "module",
-  "dependencies": {
-    "@vercel/blob": "latest"
+  "scripts": {
+    "start": "node api/index.js"
   }
 }
+
